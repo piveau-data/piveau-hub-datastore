@@ -1,0 +1,107 @@
+openapi: 3.0.2
+
+
+info:
+  version: "1.0"
+  title: piveau-hub-datastore
+  x-logo:
+    url: "./piveau-logo.png"
+
+paths:
+  /v1/data/:
+    put:
+      summary: Prepare fileupload.
+      description: Prepares the database for a fileupload with the post opertation.
+      operationId: prepareUpload
+      security:
+      - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - id
+                    - token
+                  properties:
+                    id:
+                      type: string
+                    token:
+                      type: string
+                example:
+                  - id: f67367c2-1282-421b-b64d-4ae2b3ba0953
+                    token: dooK6chi
+                  - id: 8d64c1f4-9e7e-4e76-8070-696e742e0022
+                    token: aiDuxao3
+      responses:
+        '200':
+          description: Database successfully prepared.
+        '500':
+          description: Server error.
+  /v1/data/{id}:
+    post:
+      summary: Fileupload of a single file
+      description: Endpoint for single file upload for the edp data plattform.
+      operationId: singleFileUpload
+      parameters:
+      - name: id
+        in: path
+        description: ID of the file that should be uploaded
+        required: true
+        schema:
+          type: string
+      - name: token
+        in: query
+        description: Token that will be used to verify the upload in post operation.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Fileupload successfull.
+        '400':
+          description: File send not valid.
+        '500':
+          description: Server error.
+    delete:
+      summary: Deletes a file with a specific ID in the database.
+      description: Endpoint for deleting a file in the the edp data plattform.
+      operationId: deleteEntry
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - name: id
+        in: path
+        description: ID of the file that should be deleted.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: File successfully deleted.
+        '500':
+          description: Server error.
+    get:
+      summary: Get a file with a certain ID.
+      description: Retrieves the file assosiated with the ID.
+      operationId: getFile
+      parameters:
+      - name: id
+        in: path
+        description: ID of the file that should be downloaded.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: File successfully delivered.
+        '500':
+          description: File not found.
